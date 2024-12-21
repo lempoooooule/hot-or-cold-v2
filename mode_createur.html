@@ -61,10 +61,33 @@
   <p id="status">Prêt...</p>
 
   <script>
-    function startAdvertising() {
+    let giftLocation = { latitude: 48.8566, longitude: 2.3522 }; // Exemple de position du cadeau
+
+    async function startAdvertising() {
       const status = document.getElementById('status');
       status.innerText = 'Signal envoyé... Attendez que le joueur se connecte !';
-      // Simulation de l'envoi du signal. En réalité, vous utiliseriez Bluetooth ou un autre moyen pour transmettre des informations.
+      
+      try {
+        const server = await navigator.bluetooth.requestDevice({
+          acceptAllDevices: true,
+          optionalServices: ['battery_service']
+        }).then(device => device.gatt.connect());
+
+        const serviceUUID = 'battery_service';
+        const characteristicUUID = 'battery_level';
+
+        const service = await server.getPrimaryService(serviceUUID);
+        const characteristic = await service.getCharacteristic(characteristicUUID);
+
+        const encoder = new TextEncoder();
+        const value = encoder.encode(JSON.stringify(giftLocation));
+
+        await characteristic.writeValue(value);
+        console.log('Signal envoyé :', giftLocation);
+      } catch (error) {
+        console.log('Erreur Bluetooth:', error);
+        status.innerText = 'Erreur lors de l\'envoi du signal.';
+      }
     }
   </script>
 </body>
