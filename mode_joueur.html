@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mode Joueur - Hot'or'Cold</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f0f4ff, #dce4ff);
+      color: #333;
+      text-align: center;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    h1 {
+      color: #444;
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin: 1rem 0;
+    }
+
+    .btn {
+      width: 80%;
+      max-width: 250px;
+      padding: 1rem;
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(1);
+    }
+
+    #feedback {
+      margin-top: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .shake {
+      animation: shake 0.3s ease-out;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0); }
+      25% { transform: translate(-10px, 0); }
+      50% { transform: translate(10px, 0); }
+      75% { transform: translate(-10px, 0); }
+      100% { transform: translate(10px, 0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Mode Joueur</h1>
+  <p>Déplacez-vous pour trouver le cadeau. Les indices apparaîtront ici :</p>
+  <p id="feedback">Recherche en cours...</p>
+
+  <script>
+    const feedbackElement = document.getElementById("feedback");
+
+    // La localisation du cadeau est définie dans le localStorage (simulation)
+    const giftLocation = JSON.parse(localStorage.getItem("giftLocation"));
+
+    if (!giftLocation) {
+      feedbackElement.textContent = "Aucun emplacement de cadeau défini. Veuillez demander au créateur de le définir.";
+    } else if (navigator.geolocation) {
+      setInterval(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const userLatitude = position.coords.latitude;
+          const userLongitude = position.coords.longitude;
+
+          // Calculer la distance approximative entre l'utilisateur et le cadeau (en utilisant une approximation simple)
+          const distance = Math.sqrt(
+            Math.pow(userLatitude - giftLocation.latitude, 2) +
+            Math.pow(userLongitude - giftLocation.longitude, 2)
+          );
+
+          const distanceInMeters = distance * 111320;  // Conversion en mètres
+
+          // Logique de changement d'indice en fonction de la distance
+          if (distanceInMeters < 10) {
+            feedbackElement.textContent = "Tu brûles ! 🎉";
+            document.body.style.backgroundColor = "red";
+            feedbackElement.classList.add('shake');  // Ajout de l'animation
+          } else if (distanceInMeters < 30) {
+            feedbackElement.textContent = "Tu chauffes ! 🔥";
+            document.body.style.backgroundColor = "orange";
+            feedbackElement.classList.remove('shake');
+          } else if (distanceInMeters < 50) {
+            feedbackElement.textContent = "Tu es tiède.";
+            document.body.style.backgroundColor = "yellow";
+            feedbackElement.classList.remove('shake');
+          } else if (distanceInMeters < 100) {
+            feedbackElement.textContent = "Tu gèles. ❄️";
+            document.body.style.backgroundColor = "lightblue";
+            feedbackElement.classList.remove('shake');
+          } else {
+            feedbackElement.textContent = "Tu gèles vraiment. ❄️❄️";
+            document.body.style.backgroundColor = "purple";
+            feedbackElement.classList.remove('shake');
+          }
+        }, (error) => {
+          feedbackElement.textContent = "Erreur : Impossible d'obtenir votre position.";
+        });
+      }, 1000);
+    } else {
+      feedbackElement.textContent = "La géolocalisation n'est pas supportée sur ce navigateur.";
+    }
+  </script>
+</body>
+</html>

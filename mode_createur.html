@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mode Créateur - Hot'or'Cold</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(to bottom, #f0f4ff, #dce4ff);
+      color: #333;
+      text-align: center;
+    }
+
+    h1 {
+      color: #444;
+      font-size: 2rem;
+    }
+
+    .btn {
+      width: 80%;
+      max-width: 250px;
+      padding: 1rem;
+      font-size: 1.2rem;
+      margin: 1rem 0;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .btn:active {
+      transform: scale(1);
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Mode Créateur</h1>
+  <p>Appuyez pour commencer à émettre le signal.</p>
+  <button class="btn" onclick="startAdvertising()">Commencer à émettre</button>
+  <p id="status">Prêt...</p>
+
+  <script>
+    function startAdvertising() {
+      const status = document.getElementById('status');
+      status.innerText = 'Signal envoyé... Attendez que le joueur se connecte !';
+      // Simulation de l'envoi du signal. En réalité, vous utiliseriez Bluetooth ou un autre moyen pour transmettre des informations.
+    }
+  </script>
+</body>
+</html>
